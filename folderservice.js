@@ -56,7 +56,7 @@ class FolderService {
                     logger.error("Non-handled error", error.response.data.code)
                 }
             } else {  
-                logger.error(`Error while fetching path ${path} : %j`, (error.response && error.response.data) ? error.response.data.message : "unknown error")
+                logger.error(`Error while fetching path ${path} : %j`, (error.response && error.response.data) ? error.response.data : "unknown error")
             }
         }
     }

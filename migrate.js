@@ -1,11 +1,25 @@
 import crawl from "./crawler.js"
 import uploadItem from "./uploader.js"
-import Queue from "./queue.js"
+import PQueue from "p-queue";
 
-const queue = new Queue(uploadItem)
+const queue = new PQueue({ concurrency: 1 });
 
-queue.on('update', (length) => {
-    process.stdout.write(`\rQueue length: ${length}`);
-});
+const items = await crawl(process.argv[2])
 
-crawl(process.argv[2], queue)
+let completed = 0;
+
+const uploadTasks = items.map(async (item) => {
+    return queue.add(async () => {
+        await uploadItem(item)
+        completed += 1;
+        //progressBar.update(completed);  
+    })
+})
+  
+await Promise.all(uploadTasks);
+
+
+
+
+console.log(items)
+console.log(items.length)

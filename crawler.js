@@ -1,27 +1,32 @@
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 import config from "./config.js";
 import logger from "./logger.js";
 
-const crawl = (dir, queue) => {
-    const items = fs.readdirSync(dir) 
+const crawl = async (dir) => {
+    const paths = []
+
+    const items = await fs.readdir(dir) 
     
-    for (let idx = 0; idx < items.length; idx++) {
-        const item = items[idx]
+    for (const item of items) {
+        //const item = items[idx]
         
         const filePath = path.join(dir, item)
 
         try { 
-            const itemStats = fs.statSync(filePath)
+            const itemStats = await fs.stat(filePath)
             if (itemStats.isDirectory()) {
                 if (!directoryExcluded(filePath)) {
-                    crawl(filePath, queue)
+                    //crawl(filePath, queue)
+                    paths.concat(crawl(filePath))
                 } else {
                     logger.debug(`Skipped folder ${dir}/${item}`)
                 }
             } else {
                 if (!fileExcluded(item)) {
-                    queue.enqueue(filePath)
+                    //queue.enqueue(filePath)
+                    console.log(filePath)
+                    paths.push(filePath)
                 } else {
                     logger.debug(`Skipped file ${dir}/${item}`)
                 }
@@ -31,6 +36,7 @@ const crawl = (dir, queue) => {
             logger.error(`Error while processing ${filePath}: ${error}`)
         }
     }
+    return paths
 }
 
 export default crawl
