@@ -1,0 +1,3 @@
+# Raw documentation
+
+Beginnen te lezen in migratie.js. Dei initialiseert een array die dient als queue (uit queue.js) en roept "crawl" (uit crawler.js). Als een item aan de queue wordt toegevoegd, dan wordt voor dat item "uploadItem" (uit uploader.js) aangeroepen om het naar Box te zetten. Als die "proxessor"-functie klaar is, dan roept die zichzelf nog een keer aan, zodat de hele queue wordt doorgelopen en verwerkt. uploadItem maakt eerst het hele pad aan in Box op basis van folderService (folderservice.js) en uploadt dan het bestand in die folder.
