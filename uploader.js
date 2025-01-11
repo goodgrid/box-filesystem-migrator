@@ -10,7 +10,7 @@ var folderService = new FolderService();
 
 const uploadItem = async (item) => {
 
-    logger.debug(`Item ${item} is now being migrated`)
+    logger.debug(`Uploading ${item}`)
 
     const itemFolderPath = path.dirname(item)
     const itemName = path.basename(item)
