@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import axios from 'axios'
+import Bottleneck from 'bottleneck'
 import logger from './logger.js'
 import config from './config.js'
 
@@ -13,6 +14,11 @@ let access_token = "dummy"
 const boxApi = axios.create({
     baseURL: config.boxDefaultBaseUrl,
 })
+
+// Request throttling settings 
+const limiter = new Bottleneck({
+    minTime: config.requestDelay
+});
 
 
 // This Mint Token function is creating a signed JWT and exchanging it for an 
@@ -55,8 +61,10 @@ const mintToken = async () => {
 }
 
 // We are adding the Authorization header via request interceptor, so we are sure
-// any updated access token is read from the variable.
-boxApi.interceptors.request.use(request => {
+// any updated access token is read from the variable. Also, the request throttler
+// is injected.
+boxApi.interceptors.request.use(async request => {
+    await limiter.schedule(() => { logger.debug("Thottling...")})
     request.headers.Authorization = `Bearer ${access_token}`;
     return request;
   }, function (error) {

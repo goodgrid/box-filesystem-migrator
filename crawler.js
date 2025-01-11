@@ -7,30 +7,25 @@ const crawl = async (dir) => {
     const paths = []
 
     const items = await fs.readdir(dir) 
-    
+   
     for (const item of items) {
-        //const item = items[idx]
-        
         const filePath = path.join(dir, item)
 
         try { 
             const itemStats = await fs.stat(filePath)
             if (itemStats.isDirectory()) {
                 if (!directoryExcluded(filePath)) {
-                    //crawl(filePath, queue)
-                    paths.concat(crawl(filePath))
+                    const subItems = await crawl(filePath)
+                    paths.push(...subItems)
                 } else {
                     logger.debug(`Skipped folder ${dir}/${item}`)
                 }
             } else {
                 if (!fileExcluded(item)) {
-                    //queue.enqueue(filePath)
-                    console.log(filePath)
                     paths.push(filePath)
                 } else {
                     logger.debug(`Skipped file ${dir}/${item}`)
                 }
-
             }
         } catch (error) {
             logger.error(`Error while processing ${filePath}: ${error}`)

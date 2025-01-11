@@ -48,7 +48,12 @@ class FolderService {
             if (error.response && error.response.status == 409) {
                 if (error.response.data.code == "name_temporarily_reserved") {
                     logger.warn("Path " + path + " already reserved. Retrying to get folderId")
-                    return await this.fetchFolderId(path)
+                    /*
+                        The retry after Box indicated "in use" (probably the folder is getting created)
+                        was to fetchFolder and thus directly to Box again. However, the cache should
+                        contain the newly created folder as well, so I'm changing this to getFolder()
+                    */
+                    return await this.getFolderId(path)
                 } else if (error.response.data.code == "item_name_in_use") {
                     let returnedFolderId = error.response.data.context_info.conflicts[0].id;
                     return this.appendCache(path, returnedFolderId, false)
