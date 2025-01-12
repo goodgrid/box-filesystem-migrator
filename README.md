@@ -1,3 +1,9 @@
 # Raw documentation
 
-Beginnen te lezen in migratie.js. Dei initialiseert een array die dient als queue (uit queue.js) en roept "crawl" (uit crawler.js). Als een item aan de queue wordt toegevoegd, dan wordt voor dat item "uploadItem" (uit uploader.js) aangeroepen om het naar Box te zetten. Als die "proxessor"-functie klaar is, dan roept die zichzelf nog een keer aan, zodat de hele queue wordt doorgelopen en verwerkt. uploadItem maakt eerst het hele pad aan in Box op basis van folderService (folderservice.js) en uploadt dan het bestand in die folder.
+## Global functionality
+This project crawls a local filesystem path provided as the argument to `migrate.js`. The resulting list of paths is added to a queue which is then concurrently fed to `uploadItem()`. The number of concurrent threads is configurable in `numUploadThreads`. The path provided as the argument must be an existing folder, which is checked via `isValidPath()`
+
+
+## To do
+
+- Socket hang-ups are quite common from the Box endpoints. These are not handles, but failing paths are logged to allow for manual correction afterwards

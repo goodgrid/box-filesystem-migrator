@@ -3,13 +3,13 @@ import cliProgress from 'cli-progress'
 import crawl from "./crawler.js"
 import uploadItem from "./uploader.js"
 import logger from "./logger.js";
-import { validateCommand } from "./utils.js";
+import { isValidCommand } from "./utils.js";
 import config from "./config.js";
 
 const queue = new PQueue({ concurrency: config.numUploadThreads });
 const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
-if (validateCommand(process.argv)) {
+if (isValidCommand(process.argv)) {
     const rootPath = process.argv[2]
 
     logger.info("Migration started")
